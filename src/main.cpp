@@ -90,21 +90,14 @@ int main( int argc, const char **argv )
         return -1;
     }
 
-    ShaderPtr vertShader = Shader::CreateFromFile( "./shader/simple.vert", GL_VERTEX_SHADER );
-    ShaderPtr fragShader = Shader::CreateFromFile( "./shader/simple.frag", GL_FRAGMENT_SHADER );
-    SPDLOG_INFO( "vertex shader id: {}", vertShader->Get() );
-    SPDLOG_INFO( "fragment shader id: {}", fragShader->Get() );
-
-    auto program = Program::Create( { fragShader, vertShader } );
-    SPDLOG_INFO( "program id: {}", program->Get() );
-
+    glfwSwapInterval( 0 );
     // glfw 루프 실행, 윈도우 close 버튼을 누르면 정상 종료
     SPDLOG_INFO( "Start main loop" );
     while ( !glfwWindowShouldClose( window ) )
     {
+        glfwPollEvents();
         context->Render();
         glfwSwapBuffers( window );
-        glfwPollEvents();
     }
     context.reset();
 

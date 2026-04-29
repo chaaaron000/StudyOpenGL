@@ -24,6 +24,8 @@ public:
     {
         return m_program;
     }
+    
+    void Use() const;
 
 private:
     Program()
