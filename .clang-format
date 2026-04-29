@@ -7,3 +7,10 @@ ColumnLimit: 120
 SpacesInParentheses: true
 SpaceBeforeParens: ControlStatements
 SpaceInEmptyParentheses: false
+
+AccessModifierOffset: -4
+IndentAccessModifiers: false
+
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
