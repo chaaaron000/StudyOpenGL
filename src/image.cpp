@@ -9,6 +9,7 @@ ImageUPtr Image::Load( const std::string& filepath )
     {
         return nullptr;
     }
+    SPDLOG_INFO("image: {}x{}, {} channels", image->GetWidth(), image->GetHeight(), image->GetChannelCount());
     return std::move( image );
 }
 

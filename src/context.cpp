@@ -15,30 +15,35 @@ ContextUPtr Context::Create()
 bool Context::Init()
 {
     float vertices[] = {
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // x, y, z, u, v
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // pos.xyz, normal.xyz, texcoord.uv
+        0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+
+        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+        0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
     };
 
     uint32_t indices[] = {
@@ -56,31 +61,38 @@ bool Context::Init()
     m_vertexLayout = VertexLayout::Create();
 
     // 2. VBO binding
-    m_vertexBuffer = Buffer::CreateWithData(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof(float) * 120);
+    m_vertexBuffer = Buffer::CreateWithData(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof(float) * 8 * 6 * 4);
 
     // 3. vertex attribute setting
-    m_vertexLayout->SetAttrib(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0); // 0: position attribute
-    // m_vertexLayout->SetAttrib( 1, 3, GL_FLOAT, GL_FALSE, sizeof( float ) * 8,
-    //                            sizeof( float ) * 3 ); // 1: color attribute
+    // 0: position 
+    // 1: normal 
+    // 2: texture uv 
+    m_vertexLayout->SetAttrib(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
+    m_vertexLayout->SetAttrib(
+        1,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(float) * 8,
+        sizeof(float) * 3);
     m_vertexLayout->SetAttrib(
         2,
         2,
         GL_FLOAT,
         GL_FALSE,
-        sizeof(float) * 5,
-        sizeof(float) * 3); // 2: texture uv attribute
+        sizeof(float) * 8,
+        sizeof(float) * 6);
 
     m_indexBuffer = Buffer::CreateWithData(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(uint32_t) * 36);
 
-    ShaderPtr vertShader = Shader::CreateFromFile("./shader/texture.vert", GL_VERTEX_SHADER);
-    ShaderPtr fragShader = Shader::CreateFromFile("./shader/texture.frag", GL_FRAGMENT_SHADER);
-    if ( !vertShader || !fragShader )
+    m_simpleProgram = Program::Create("./shader/simple.vert", "./shader/simple.frag");
+    if ( !m_simpleProgram )
     {
         return false;
     }
-    SPDLOG_INFO("vertex shader id: {}", vertShader->Get());
-    SPDLOG_INFO("fragment shader id: {}", fragShader->Get());
-    m_program = Program::Create({ fragShader, vertShader });
+    SPDLOG_INFO("simpleProgram id: {}", m_simpleProgram->Get());
+
+    m_program = Program::Create("./shader/lighting.vert", "./shader/lighting.frag");
     if ( !m_program )
     {
         return false;
@@ -93,30 +105,9 @@ bool Context::Init()
 
     glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
 
-    // 이미지 로딩
-    auto image = Image::Load("./image/container.jpg");
-    if ( !image )
-    {
-        return false;
-    }
-    SPDLOG_INFO("image: {}x{}, {} channels", image->GetWidth(), image->GetHeight(), image->GetChannelCount());
-
-    // auto image = Image::Create( 512, 512 );
-    // image->SetCheckImage( 16, 16 );
-
-    // 텍스처 생성
-    m_texture = Texture::CreateFromImage(image.get());
-
-    auto image2 = Image::Load("./image/awesomeface.png");
-    m_texture2 = Texture::CreateFromImage(image2.get());
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texture->Get());
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, m_texture2->Get());
-    m_program->Use();
-    m_program->SetUniform("tex", 0);
-    m_program->SetUniform("tex2", 1);
+    // diffuse 텍스처 로딩
+    m_material.diffuse = Texture::CreateFromImage(Image::Load("./image/container2.png").get());
+    m_material.specular = Texture::CreateFromImage(Image::Load("./image/container2_specular.png").get());
 
     // x축으로 -55도 회전
     auto model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -140,17 +131,41 @@ void Context::Render()
 {
     if ( ImGui::Begin("UI Window") )
     {
+        if ( ImGui::CollapsingHeader("light", ImGuiTreeNodeFlags_DefaultOpen) )
+        {
+            ImGui::DragFloat3("light.position", glm::value_ptr(m_light.position), 0.01f);
+            ImGui::ColorEdit3("light.ambient", glm::value_ptr(m_light.ambient));
+            ImGui::ColorEdit3("light.diffuse", glm::value_ptr(m_light.diffuse));
+            ImGui::ColorEdit3("light.specular", glm::value_ptr(m_light.specular));
+        }
+
+        ImGui::Separator();
+
+        if ( ImGui::CollapsingHeader("material", ImGuiTreeNodeFlags_DefaultOpen) )
+        {
+            ImGui::ColorEdit3("material.baseColor", glm::value_ptr(m_material.baseColor));
+            ImGui::DragFloat("material.shininess", &m_material.shininess, 1.0f, 1.0f, 256.0f);
+        }
+
+        ImGui::Separator();
+
+        ImGui::Checkbox("Animation", &m_animation);
+
+        ImGui::Separator();
+
         if ( ImGui::ColorEdit4("Clear color", glm::value_ptr(m_clearColor)) )
         {
             glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
         }
 
         ImGui::Separator();
+
         ImGui::DragFloat3("Camera Position", glm::value_ptr(m_cameraPos), 0.01f);
         ImGui::DragFloat("Camera Yaw", &m_cameraYaw, 0.1f);
         ImGui::DragFloat("Camera Pitch", &m_cameraPitch, 0.5f, -89.0f, 89.0f);
 
         ImGui::Separator();
+
         if ( ImGui::Button("Reset Camera") )
         {
             m_cameraYaw = 0.0f;
@@ -193,10 +208,13 @@ void Context::Render()
         glm::radians(45.0f),
         static_cast<float>(m_width) / static_cast<float>(m_height),
         0.01f,
-        10.0f);
+        100.0f);
 
     /*
     glm::lockAt을 쓰지 않는다면 이런 식으로 구현할 수 있다.
+    auto cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+    auto cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+    auto cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
     auto cameraZ = glm::normalize(cameraPos - cameraTarget);
     auto cameraX = glm::normalize(glm::cross(cameraUp, cameraZ));
     auto cameraY = glm::cross(cameraZ, cameraX);
@@ -212,22 +230,40 @@ void Context::Render()
         m_cameraPos + m_cameraFront,
         m_cameraUp);
 
-    auto cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-    auto cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-    auto cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    // 라이트의 위치 흰 정육면체 그리기
+    auto lightModelTransform =
+        glm::translate(glm::mat4(1.0), m_light.position) *
+        glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
+    m_simpleProgram->Use();
+    m_simpleProgram->SetUniform("color", glm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
+    m_simpleProgram->SetUniform("transform", projection * view * lightModelTransform);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+    m_program->Use();
+    m_program->SetUniform("viewPos", m_cameraPos);
+    m_program->SetUniform("light.position", m_light.position);
+    m_program->SetUniform("light.ambient", m_light.ambient);
+    m_program->SetUniform("light.diffuse", m_light.diffuse);
+    m_program->SetUniform("light.specular", m_light.specular);
+    m_program->SetUniform("material.diffuse", 0);
+    m_program->SetUniform("material.baseColor", m_material.baseColor);
+    m_program->SetUniform("material.specular",1);
+    m_program->SetUniform("material.shininess", m_material.shininess);
+    
+    glActiveTexture(GL_TEXTURE0);
+    m_material.diffuse->Bind();
+    glActiveTexture(GL_TEXTURE1);
+    m_material.specular->Bind();
 
     for ( size_t i = 0; i < cubePositions.size(); i++ )
     {
         auto& pos = cubePositions[i];
         auto model = glm::translate(glm::mat4(1.0f), pos);
-        model = glm::rotate(
-            model,
-            glm::radians(
-                static_cast<float>(glfwGetTime()) * 120.0f + 20.0f * static_cast<float>(
-                    i)),
-            glm::vec3(1.0f, 0.5f, 0.0f));
+        auto angle = glm::radians((float)glfwGetTime() * 120.0f + 20.0f * (float)i);
+        model = glm::rotate(model, m_animation ? angle : 0.0f, glm::vec3(1.0f, 0.5f, 0.0f));
         auto transform = projection * view * model;
         m_program->SetUniform("transform", transform);
+        m_program->SetUniform("modelTransform", model);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     }
 
@@ -247,6 +283,7 @@ void Context::ProcessInput(GLFWwindow* window)
     {
         return;
     }
+
     const float cameraSpeed = 0.05f;
 
     if ( glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS )
@@ -292,6 +329,7 @@ void Context::MouseMove(double x, double y)
     {
         return;
     }
+
     auto pos = glm::vec2(static_cast<float>(x), static_cast<float>(y));
     auto deltaPos = pos - m_prevMousePos;
 

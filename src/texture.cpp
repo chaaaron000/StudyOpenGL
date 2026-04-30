@@ -36,6 +36,7 @@ void Texture::SetWrap( uint32_t sWrap, uint32_t tWrap ) const
 void Texture::CreateTexture()
 {
     glGenTextures( 1, &m_texture );
+    
     // bind and set default filter and wrap option
     Bind();
     

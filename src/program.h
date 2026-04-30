@@ -1,6 +1,4 @@
-﻿
-
-#ifndef __PROGRAM_H__
+﻿#ifndef __PROGRAM_H__
 #define __PROGRAM_H__
 
 #include "common.h"
@@ -12,32 +10,38 @@
  * Shader 인스턴스는 다른 Program 인스턴스를 만드는 데 재사용할 수도 있음
  * 따라서 shared pointer를 사용: ShaderPtr
  */
-CLASS_PTR( Program )
+CLASS_PTR(Program)
+
+
 class Program
 {
 public:
-    static ProgramUPtr Create( const std::vector<ShaderPtr> &shaders );
+    static ProgramUPtr Create(const std::vector<ShaderPtr>& shaders);
+    static ProgramUPtr Create(const std::string& vertShaderFilename, const std::string& fragShaderFilename);
 
     ~Program();
-    
+
     [[nodiscard]] uint32_t Get() const
     {
         return m_program;
     }
-    
+
     void Use() const;
-    
+
     void SetUniform(const std::string& name, int value) const;
+    void SetUniform(const std::string& name, float value) const;
+    void SetUniform(const std::string& name, const glm::vec3& value) const;
+    void SetUniform(const std::string& name, const glm::vec4& value) const;
     void SetUniform(const std::string& name, const glm::mat4& value) const;
 
 private:
     Program()
     {
     }
-    
-    bool Link( const std::vector<ShaderPtr> &shaders );
-    
-    uint32_t m_program{ 0 };
+
+    bool Link(const std::vector<ShaderPtr>& shaders);
+
+    uint32_t m_program { 0 };
 };
 
 #endif //__PROGRAM_H__
