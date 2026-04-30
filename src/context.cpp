@@ -1,4 +1,5 @@
 ﻿#include "context.h"
+#include "image.h"
 
 ContextUPtr Context::Create()
 {
@@ -13,11 +14,11 @@ ContextUPtr Context::Create()
 bool Context::Init()
 {
     float vertices[] = {
-        // x, y, z, r, g, b
-        0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, // top right, red
-        0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right, green
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom left, blue
-        -0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 0.0f, // top left, yellow
+        // [x, y, z, r, g, b, s, t]
+        0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, //
+        0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, //
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //
+        -0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, //
     };
 
     uint32_t indices[] = {
@@ -36,17 +37,19 @@ bool Context::Init()
     m_vertexLayout = VertexLayout::Create();
 
     // 2. VBO binding
-    m_vertexBuffer = Buffer::CreateWithData( GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof( float ) * 24 );
+    m_vertexBuffer = Buffer::CreateWithData( GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof( float ) * 32 );
 
     // 3. vertex attribute setting
-    m_vertexLayout->SetAttrib( 0, 3, GL_FLOAT, GL_FALSE, sizeof( float ) * 6, 0 ); // 0: position attribute
-    m_vertexLayout->SetAttrib( 1, 3, GL_FLOAT, GL_FALSE, sizeof( float ) * 6,
+    m_vertexLayout->SetAttrib( 0, 3, GL_FLOAT, GL_FALSE, sizeof( float ) * 8, 0 ); // 0: position attribute
+    m_vertexLayout->SetAttrib( 1, 3, GL_FLOAT, GL_FALSE, sizeof( float ) * 8,
                                sizeof( float ) * 3 ); // 1: color attribute
+    m_vertexLayout->SetAttrib( 2, 2, GL_FLOAT, GL_FALSE, sizeof( float ) * 8,
+                               sizeof( float ) * 6 ); // 2: texture uv attribute
 
     m_indexBuffer = Buffer::CreateWithData( GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof( uint32_t ) * 6 );
 
-    ShaderPtr vertShader = Shader::CreateFromFile( "./shader/per_vertex_color.vert", GL_VERTEX_SHADER );
-    ShaderPtr fragShader = Shader::CreateFromFile( "./shader/per_vertex_color.frag", GL_FRAGMENT_SHADER );
+    ShaderPtr vertShader = Shader::CreateFromFile( "./shader/texture.vert", GL_VERTEX_SHADER );
+    ShaderPtr fragShader = Shader::CreateFromFile( "./shader/texture.frag", GL_FRAGMENT_SHADER );
     if ( !vertShader || !fragShader )
     {
         return false;
@@ -65,6 +68,32 @@ bool Context::Init()
     glUniform4f( loc, 1.0f, 1.0f, 0.0f, 1.0f );
 
     glClearColor( 0.1f, 0.2f, 0.3f, 0.0f );
+
+    // 이미지 로딩
+    auto image = Image::Load( "./image/container.jpg" );
+    if ( !image )
+    {
+        return false;
+    }
+    SPDLOG_INFO( "image: {}x{}, {} channels", image->GetWidth(), image->GetHeight(), image->GetChannelCount() );
+
+    // auto image = Image::Create( 512, 512 );
+    // image->SetCheckImage( 16, 16 );
+
+    // 텍스처 생성
+    m_texture = Texture::CreateFromImage( image.get() );
+
+    auto image2 = Image::Load( "./image/awesomeface.png" );
+    m_texture2 = Texture::CreateFromImage( image2.get() );
+
+    glActiveTexture( GL_TEXTURE0 );
+    glBindTexture( GL_TEXTURE_2D, m_texture->Get() );
+    glActiveTexture( GL_TEXTURE1 );
+    glBindTexture( GL_TEXTURE_2D, m_texture2->Get() );
+    m_program->Use();
+    glUniform1i( glGetUniformLocation( m_program->Get(), "tex" ), 0 );
+    glUniform1i( glGetUniformLocation( m_program->Get(), "tex2" ), 1 );
+
     return true;
 }
 
