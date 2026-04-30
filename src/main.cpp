@@ -3,11 +3,12 @@
 #include <GLFW/glfw3.h>
 // @formatter:on
 #include <spdlog/spdlog.h>
-
 #include "common.h"
 #include "program.h"
 #include "shader.h"
 #include "context.h"
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height)
 {
@@ -18,6 +19,7 @@ void OnFramebufferSizeChange(GLFWwindow* window, int width, int height)
 
 void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
     SPDLOG_INFO(
         "key: {}, scancode: {}, action: {}, mods: {}{}{}",
         key,
@@ -46,11 +48,22 @@ void OnCursorPos(GLFWwindow* window, double x, double y)
 
 void OnMouseButton(GLFWwindow* window, int button, int action, int modifier)
 {
+    ImGui_ImplGlfw_MouseButtonCallback(window, button, action, modifier);
     auto context = static_cast<Context*>(glfwGetWindowUserPointer(window));
     double x;
     double y;
     glfwGetCursorPos(window, &x, &y);
     context->MouseButton(button, action, x, y);
+}
+
+void OnCharEvent(GLFWwindow* window, unsigned int ch)
+{
+    ImGui_ImplGlfw_CharCallback(window, ch);
+}
+
+void OnScroll(GLFWwindow* window, double xoffset, double yoffset)
+{
+    ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 }
 
 void Render()
@@ -99,6 +112,11 @@ int main(int argc, const char** argv)
     auto glVersion = reinterpret_cast<const char*>(glGetString(GL_VERSION));
     SPDLOG_INFO("OpenGL context version: {}", glVersion);
 
+    auto imguiContext = ImGui::CreateContext();
+    ImGui::SetCurrentContext(imguiContext);
+    ImGui_ImplGlfw_InitForOpenGL(window, false);
+    ImGui_ImplOpenGL3_Init("#version 330");
+    ImGui_ImplOpenGL3_CreateDeviceObjects();
 
     auto context = Context::Create();
     if ( !context )
@@ -114,8 +132,10 @@ int main(int argc, const char** argv)
     OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
     glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);
     glfwSetKeyCallback(window, OnKeyEvent);
+    glfwSetCharCallback(window, OnCharEvent);
     glfwSetCursorPosCallback(window, OnCursorPos);
     glfwSetMouseButtonCallback(window, OnMouseButton);
+    glfwSetScrollCallback(window, OnScroll);
 
     glfwSwapInterval(0);
     // glfw 루프 실행, 윈도우 close 버튼을 누르면 정상 종료
@@ -123,11 +143,24 @@ int main(int argc, const char** argv)
     while ( !glfwWindowShouldClose(window) )
     {
         glfwPollEvents();
+
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
         context->ProcessInput(window);
         context->Render();
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         glfwSwapBuffers(window);
     }
     context.reset();
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplOpenGL3_DestroyDeviceObjects();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext(imguiContext);
 
     glfwTerminate();
     return 0;

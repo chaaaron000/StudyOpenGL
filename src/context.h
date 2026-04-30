@@ -32,13 +32,7 @@ private:
     int m_width { 640 };
     int m_height { 480 };
 
-    ProgramUPtr m_program;
-
-    VertexLayoutUPtr m_vertexLayout;
-    BufferUPtr m_vertexBuffer;
-    BufferUPtr m_indexBuffer;
-    TextureUPtr m_texture;
-    TextureUPtr m_texture2;
+    glm::vec4 m_clearColor { glm::vec4(0.1f, 0.2f, 0.3f, 0.0f) };
 
     // Camera parameter
     bool m_cameraControl { false };
@@ -48,6 +42,13 @@ private:
     glm::vec3 m_cameraPos { glm::vec3(0.0f, 0.0f, 3.0f) };
     glm::vec3 m_cameraFront { glm::vec3(0.0f, 0.0f, -1.0f) };
     glm::vec3 m_cameraUp { glm::vec3(0.0f, 1.0f, 0.0f) };
+
+    ProgramUPtr m_program;
+    VertexLayoutUPtr m_vertexLayout;
+    BufferUPtr m_vertexBuffer;
+    BufferUPtr m_indexBuffer;
+    TextureUPtr m_texture;
+    TextureUPtr m_texture2;
 };
 
 #endif //__CONTEXT_H__
