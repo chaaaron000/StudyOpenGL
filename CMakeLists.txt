@@ -20,12 +20,33 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/texture.h src/texture.cpp
 )
 
-include(Dependency.cmake)
+find_package(spdlog CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
+find_package(Stb REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
+
+#include(Dependency.cmake)
 
 # 우리 프로젝트에 include / lib 관련 옵션 추가
-target_include_directories(${PROJECT_NAME} PUBLIC ${DEP_INCLUDE_DIR})
-target_link_directories(${PROJECT_NAME} PUBLIC ${DEP_LIB_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${DEP_LIBS})
+#target_include_directories(${PROJECT_NAME} PUBLIC ${DEP_INCLUDE_DIR})
+#target_link_directories(${PROJECT_NAME} PUBLIC ${DEP_LIB_DIR})
+#target_link_libraries(${PROJECT_NAME} PUBLIC ${DEP_LIBS})
+
+target_link_libraries(${PROJECT_NAME}
+        PUBLIC
+        glfw
+        glad::glad
+        glm::glm
+        spdlog::spdlog
+        imgui::imgui
+)
+
+target_include_directories(${PROJECT_NAME}
+        PUBLIC
+        ${Stb_INCLUDE_DIR}
+)
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC
         WINDOW_NAME="${WINDOW_NAME}"
@@ -34,7 +55,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
 )
 
 # Dependency들이 먼저 build 될 수 있게 관계 설정
-add_dependencies(${PROJECT_NAME} ${DEP_LIST})
+#add_dependencies(${PROJECT_NAME} ${DEP_LIST})
 
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /utf-8)

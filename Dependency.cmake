@@ -18,7 +18,6 @@ ExternalProject_Add(
         -DCMAKE_INSTALL_PREFIX=${DEP_INSTALL_DIR}
         TEST_COMMAND ""
 )
-
 # Dependency 리스트 및 라이브러리 파일 리스트 추가
 set(DEP_LIST ${DEP_LIST} dep-spdlog)
 set(DEP_LIBS ${DEP_LIBS} spdlog$<$<CONFIG:Debug>:d>)
@@ -38,7 +37,6 @@ ExternalProject_Add(
         -DGLFW_BUILD_DOCS=OFF
         TEST_COMMAND ""
 )
-
 set(DEP_LIST ${DEP_LIST} dep_glfw)
 set(DEP_LIBS ${DEP_LIBS} glfw3)
 
@@ -56,7 +54,6 @@ ExternalProject_Add(
         -DGLAD_INSTALL=ON
         TEST_COMMAND ""
 )
-
 set(DEP_LIST ${DEP_LIST} dep_glad)
 set(DEP_LIBS ${DEP_LIBS} glad)
 
@@ -75,7 +72,6 @@ ExternalProject_Add(
         ${PROJECT_BINARY_DIR}/dep_stb-prefix/src/dep_stb/stb_image.h
         ${DEP_INSTALL_DIR}/include/stb/stb_image.h
 )
-
 set(DEP_LIST ${DEP_LIST} dep_stb)
 
 # glm
@@ -93,7 +89,6 @@ ExternalProject_Add(
         ${PROJECT_BINARY_DIR}/dep_glm-prefix/src/dep_glm/glm
         ${DEP_INSTALL_DIR}/include/glm
 )
-
 set(DEP_LIST ${DEP_LIST} dep_glm)
 
 # imgui
