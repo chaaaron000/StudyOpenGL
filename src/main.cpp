@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 // @formatter:on
+
 #include <spdlog/spdlog.h>
 #include "common.h"
 #include "program.h"

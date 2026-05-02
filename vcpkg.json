@@ -2,10 +2,9 @@
   "name": "study-opengl",
   "version": "0.0.1",
   "dependencies": [
-    "spdlog",
-    "glfw3",
+    "eastl",
     "glad",
-    "stb",
+    "glfw3",
     "glm",
     {
       "name": "imgui",
@@ -13,6 +12,9 @@
         "glfw-binding",
         "opengl3-binding"
       ]
-    }
+    },
+    "spdlog",
+    "stb",
+    "assimp"
   ]
 }

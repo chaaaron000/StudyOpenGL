@@ -3,6 +3,9 @@
 struct Light
 {
     vec3 position;
+    vec3 direction;
+    vec2 cutoff;
+    vec3 attenuation;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -28,7 +31,6 @@ uniform Material material;
 
 void main()
 {
-    vec3 lightDir = normalize(light.position - position);
     vec3 texColor = texture2D(material.diffuse, texCoord).xyz;
     vec3 color = texColor * material.baseColor;
     
@@ -36,17 +38,31 @@ void main()
     vec3 ambient = color * light.ambient;
     
     // 분산광
-    vec3 pixelNorm = normalize(normal);
-    float diff = max(dot(pixelNorm, lightDir), 0.0);
-    vec3 diffuse = diff * color * light.diffuse;
+    float dist = length(light.position - position);
+    vec3 distPoly = vec3(1.0, dist, dist * dist);
+    float attenuation = 1.0 / dot(distPoly, light.attenuation);
+    vec3 lightDir = (light.position - position) / dist;
     
-    // 반사광
-    vec3 specColor = texture2D(material.specular, texCoord).xyz;
-    vec3 viewDir = normalize(viewPos - position);
-    vec3 reflectDir = reflect(-lightDir, pixelNorm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = spec * specColor * light.specular;
-    
-    vec3 result = ambient + diffuse + specular;
+    vec3 result = ambient;
+    float theta = dot(lightDir, normalize(-light.direction));
+    float intensity = clamp( (theta - light.cutoff[1]) / (light.cutoff[0] - light.cutoff[1]), 0.0, 1.0 );
+
+    if (intensity > 0.0) 
+    {
+        vec3 pixelNorm = normalize(normal);
+        float diff = max(dot(pixelNorm, lightDir), 0.0);
+        vec3 diffuse = diff * texColor * light.diffuse;
+
+        // 반사광
+        vec3 specColor = texture2D(material.specular, texCoord).xyz;
+        vec3 viewDir = normalize(viewPos - position);
+        vec3 reflectDir = reflect(-lightDir, pixelNorm);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+        vec3 specular = spec * specColor * light.specular;
+
+        result += (diffuse + specular) * intensity;
+    }
+
+    result *= attenuation;
     fragColor = vec4(result, 1.0);
 }

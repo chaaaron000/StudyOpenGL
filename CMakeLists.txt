@@ -18,6 +18,11 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/vertex_layout.h src/vertex_layout.cpp
         src/image.h src/image.cpp
         src/texture.h src/texture.cpp
+        src/mesh.h
+        src/mesh.cpp
+        src/eastl_config.cpp
+        src/Model.cpp
+        src/Model.h
 )
 
 find_package(spdlog CONFIG REQUIRED)
@@ -26,6 +31,8 @@ find_package(glad CONFIG REQUIRED)
 find_package(Stb REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
+find_package(EASTL CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
 #include(Dependency.cmake)
 
@@ -41,6 +48,8 @@ target_link_libraries(${PROJECT_NAME}
         glm::glm
         spdlog::spdlog
         imgui::imgui
+        EASTL
+        assimp::assimp
 )
 
 target_include_directories(${PROJECT_NAME}
