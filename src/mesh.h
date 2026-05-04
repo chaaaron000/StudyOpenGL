@@ -1,11 +1,14 @@
 ﻿#ifndef __MESH_H__
 #define __MESH_H__
 
-#include <EASTL/vector.h>
-
 #include "common.h"
 #include "buffer.h"
+#include <EASTL/vector.h>
+#include "texture.h"
 #include "vertex_layout.h"
+
+
+class Program;
 
 
 struct Vertex
@@ -16,14 +19,34 @@ struct Vertex
 };
 
 
+CLASS_PTR(Material);
 CLASS_PTR(Mesh);
+
+
+class Material
+{
+public:
+    static MaterialUPtr Create() { return MaterialUPtr(new Material()); }
+
+    void SetToProgram(const Program* program) const;
+
+    TexturePtr diffuse;
+    TexturePtr specular;
+    glm::vec3 baseColor { glm::vec3(1.0f, 1.0f, 1.0f) };
+    float shininess { 32.0f };
+
+private:
+    Material()
+    {
+    }
+};
 
 
 class Mesh
 {
 public:
     static MeshUPtr Create(
-        const eastl::vector<Vertex>& vertices, 
+        const eastl::vector<Vertex>& vertices,
         const eastl::vector<uint32_t>& indices,
         uint32_t primitiveType);
     static MeshUPtr CreateBox();
@@ -31,8 +54,11 @@ public:
     [[nodiscard]] const VertexLayout* GetVertexLayout() const { return m_vertexLayout.get(); }
     [[nodiscard]] BufferPtr GetVertexBuffer() const { return m_vertexBuffer; }
     [[nodiscard]] BufferPtr GetIndexBuffer() const { return m_indexBuffer; }
+    [[nodiscard]] MaterialPtr GetMaterial() const { return m_material; }
 
-    void Draw() const;
+    void SetMaterial(MaterialPtr material) { m_material = material; }
+
+    void Draw(const Program* program) const;
 
 private:
     Mesh()
@@ -49,6 +75,7 @@ private:
     VertexLayoutUPtr m_vertexLayout;
     BufferPtr m_vertexBuffer;
     BufferPtr m_indexBuffer;
+    MaterialPtr m_material;
 };
 
 #endif //__MESH_H__

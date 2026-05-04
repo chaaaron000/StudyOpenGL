@@ -8,6 +8,7 @@
 #include "common.h"
 #include "mesh.h"
 
+#include <EASTL/vector.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -22,7 +23,7 @@ public:
 
     [[nodiscard]] int GetMeshCount() const { return static_cast<int>(m_meshes.size()); }
     [[nodiscard]] MeshPtr GetMesh(int index) const { return m_meshes[index]; }
-    void Draw() const;
+    void Draw(const Program* program) const;
 
 private:
     Model()
@@ -33,7 +34,8 @@ private:
     void ProcessMesh(aiMesh* mesh, const aiScene* scene);
     void ProcessNode(aiNode* node, const aiScene* scene);
 
-    std::vector<MeshPtr> m_meshes;
+    eastl::vector<MeshPtr> m_meshes;
+    eastl::vector<MaterialPtr> m_materials;
 };
 
 

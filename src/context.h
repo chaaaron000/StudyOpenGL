@@ -28,22 +28,13 @@ private:
         glm::vec3 specular { glm::vec3(1.0f, 1.0f, 1.0f) };
     };
 
-
-    // material parameter
-    struct Material
-    {
-        TextureUPtr diffuse;
-        TextureUPtr specular;
-        glm::vec3 baseColor { glm::vec3(1.0f, 1.0f, 1.0f) };
-        float shininess { 32.0f };
-    };
-
 public:
     static ContextUPtr Create();
 
     void Render();
-    void ProcessInput(GLFWwindow* window);
+    
     void Reshape(int width, int height);
+    void ProcessInput(GLFWwindow* window);
     void MouseMove(double x, double y);
     void MouseButton(int button, int action, double x, double y);
 
@@ -64,7 +55,6 @@ private:
     glm::vec4 m_clearColor { glm::vec4(0.1f, 0.2f, 0.3f, 0.0f) };
 
     Light m_light;
-    Material m_material;
 
     // Camera parameter
     bool m_cameraControl { false };
@@ -75,17 +65,12 @@ private:
     glm::vec3 m_cameraFront { glm::vec3(0.0f, 0.0f, -1.0f) };
     glm::vec3 m_cameraUp { glm::vec3(0.0f, 1.0f, 0.0f) };
 
-    ProgramUPtr m_program;
-    ProgramUPtr m_simpleProgram;
-
+    // light 오브젝트
+    ProgramUPtr m_simpleProgram; 
     MeshUPtr m_box;
+    
+    ProgramUPtr m_program;
     ModelUPtr m_model;
-
-    VertexLayoutUPtr m_vertexLayout;
-    BufferUPtr m_vertexBuffer;
-    BufferUPtr m_indexBuffer;
-    TextureUPtr m_texture;
-    TextureUPtr m_texture2;
 };
 
 #endif //__CONTEXT_H__

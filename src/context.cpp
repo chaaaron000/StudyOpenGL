@@ -12,66 +12,6 @@ ContextUPtr Context::Create()
     return std::move(context);
 }
 
-bool Context::Init()
-{
-    m_box = Mesh::CreateBox();
-    m_model = Model::Load("./model/backpack/backpack.obj");
-    if ( !m_model )
-    {
-        return false;
-    }
-
-    m_simpleProgram = Program::Create("./shader/simple.vert", "./shader/simple.frag");
-    if ( !m_simpleProgram )
-    {
-        return false;
-    }
-    SPDLOG_INFO("simpleProgram id: {}", m_simpleProgram->Get());
-
-    m_program = Program::Create("./shader/lighting.vert", "./shader/lighting.frag");
-    if ( !m_program )
-    {
-        return false;
-    }
-    SPDLOG_INFO("program id: {}", m_program->Get());
-
-    auto loc = glGetUniformLocation(m_program->Get(), "color");
-    m_program->Use();
-    glUniform4f(loc, 1.0f, 1.0f, 0.0f, 1.0f);
-
-    glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
-
-    // diffuse 텍스처 로딩
-    m_material.diffuse = Texture::CreateFromImage(
-        Image::CreateSingleColorImage(
-            4,
-            4,
-            glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)).get());
-
-    m_material.specular = Texture::CreateFromImage(
-        Image::CreateSingleColorImage(
-            4,
-            4,
-            glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)).get());
-
-    // x축으로 -55도 회전
-    auto model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    // 카메라는 원점으로부터 z축 방향으로 -3만큼 떨어짐
-    auto view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-    // 종횡비 4:3, 세로화각 45도의 원근 투영
-    auto projection = glm::perspective(
-        glm::radians(45.0f),
-        static_cast<float>(640) / static_cast<float>(480),
-        0.01f,
-        10.0f);
-    // auto projection = glm::ortho( -1.0f, 1.0f, -1.0f, 1.0f, 0.01f, 10.0f );
-    auto transform = projection * view * model;
-    auto transformLoc = glGetUniformLocation(m_program->Get(), "transform");
-    m_program->SetUniform("transform", transform);
-
-    return true;
-}
-
 void Context::Render()
 {
     if ( ImGui::Begin("UI Window") )
@@ -89,11 +29,11 @@ void Context::Render()
 
         ImGui::Separator();
 
-        if ( ImGui::CollapsingHeader("material", ImGuiTreeNodeFlags_DefaultOpen) )
-        {
-            ImGui::ColorEdit3("material.baseColor", glm::value_ptr(m_material.baseColor));
-            ImGui::DragFloat("material.shininess", &m_material.shininess, 1.0f, 1.0f, 256.0f);
-        }
+        // if ( ImGui::CollapsingHeader("material", ImGuiTreeNodeFlags_DefaultOpen) )
+        // {
+        //     ImGui::ColorEdit3("material.baseColor", glm::value_ptr(m_material->baseColor));
+        //     ImGui::DragFloat("material.shininess", &m_material->shininess, 1.0f, 1.0f, 256.0f);
+        // }
 
         ImGui::Separator();
 
@@ -173,7 +113,7 @@ void Context::Render()
     m_simpleProgram->Use();
     m_simpleProgram->SetUniform("color", glm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
     m_simpleProgram->SetUniform("transform", projection * view * lightModelTransform);
-    m_box->Draw();
+    m_box->Draw(m_simpleProgram.get());
 
     m_program->Use();
     m_program->SetUniform("viewPos", m_cameraPos);
@@ -191,20 +131,11 @@ void Context::Render()
     m_program->SetUniform("light.diffuse", m_light.diffuse);
     m_program->SetUniform("light.specular", m_light.specular);
 
-    m_program->SetUniform("material.diffuse", 0);
-    m_program->SetUniform("material.baseColor", m_material.baseColor);
-    m_program->SetUniform("material.specular", 1);
-    m_program->SetUniform("material.shininess", m_material.shininess);
-    glActiveTexture(GL_TEXTURE0);
-    m_material.diffuse->Bind();
-    glActiveTexture(GL_TEXTURE1);
-    m_material.specular->Bind();
-
     auto modelTransform = glm::mat4(1.0f);
     auto transform = projection * view * modelTransform;
     m_program->SetUniform("transform", transform);
     m_program->SetUniform("modelTransform", modelTransform);
-    m_model->Draw();
+    m_model->Draw(m_program.get());
 
     // glDrawElements(primitive, count, type, pointer/offset)
     // - 현재 바인딩된 VAO, VBO, EBO를 바탕으로 그리기
@@ -213,6 +144,13 @@ void Context::Render()
     // - type: index의 데이터형
     // - pointer/offset: 그리고자 하는 EBO의 첫 데이터로부터의 오프셋
     // glDrawElements( GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0 );
+}
+
+void Context::Reshape(int width, int height)
+{
+    m_width = width;
+    m_height = height;
+    glViewport(0, 0, m_width, m_height);
 }
 
 void Context::ProcessInput(GLFWwindow* window)
@@ -252,13 +190,6 @@ void Context::ProcessInput(GLFWwindow* window)
     {
         m_cameraPos -= cameraSpeed * cameraUp;
     }
-}
-
-void Context::Reshape(int width, int height)
-{
-    m_width = width;
-    m_height = height;
-    glViewport(0, 0, m_width, m_height);
 }
 
 void Context::MouseMove(double x, double y)
@@ -311,4 +242,34 @@ void Context::MouseButton(int button, int action, double x, double y)
             m_cameraControl = false;
         }
     }
+}
+
+bool Context::Init()
+{
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
+
+    m_simpleProgram = Program::Create("./shader/simple.vert", "./shader/simple.frag");
+    if ( !m_simpleProgram )
+    {
+        return false;
+    }
+    SPDLOG_INFO("simpleProgram id: {}", m_simpleProgram->Get());
+
+    m_program = Program::Create("./shader/lighting.vert", "./shader/lighting.frag");
+    if ( !m_program )
+    {
+        return false;
+    }
+    SPDLOG_INFO("program id: {}", m_program->Get());
+
+    m_box = Mesh::CreateBox();
+
+    m_model = Model::Load("./model/backpack/backpack.obj");
+    if ( !m_model )
+    {
+        return false;
+    }
+
+    return true;
 }
